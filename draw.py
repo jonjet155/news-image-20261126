@@ -49,7 +49,7 @@ PANELS = [
          art="macys", chip="POSTPONED TO SATURDAY",
          head="Macy's 100th Thanksgiving parade postponed to Saturday",
          deck="30 mph winds, gusts to 55 mph, empty the route; the parade "
-              "moves to Saturday — a first. Announced 25 Nov."),
+              "moves to Saturday — a first in 100 years."),
     dict(n=2, region="Middle East", tag="CONFIRMED", src="SPA",
          art="missile", chip="2 MISSILES DOWN",
          head="Saudi Arabia intercepts 2 Houthi missiles aimed at Riyadh",
@@ -534,11 +534,11 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
 # from true point to the pin disc when offset != (0, 0).
 PINS = {1: (-74.0, 40.7, 0, 0), 2: (46.7, 24.7, -3, -6),
         3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
-        5: (139.7, 35.7, -5, 0), 6: (30.5, 50.45, 0, 0),
+        5: (139.7, 35.7, -8, 0), 6: (30.5, 50.45, 0, 0),
         7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, 0, 0), 10: (56.2, 26.2, 2, 5),
-        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 1, -11),
-        13: (-1.55, 53.8, -9, -9)}
+        9: (-0.1, 51.5, -9, 7), 10: (56.2, 26.2, 2, 5),
+        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 3, -12),
+        13: (-1.55, 53.8, 0, 0)}
 
 # ---------------------------------------------------------------- render
 
@@ -699,14 +699,16 @@ def render():
     # Japan is a thin sliver at this scale: fatten its blob slightly so the
     # green island visibly protrudes beyond pin 5 (B14 small-island rule).
     # v4: blob AND pin both shifted 5px west — v3 pin sat on the island's
-    # eastern edge, disc mostly over the Pacific.
+    # eastern edge, disc mostly over the Pacific. v5: pin shifted 3px
+    # further west (-8) so the disc sits inside the blob, land east of it.
     jx, jy = px(139.7, 35.7)
     d.ellipse([jx - 13, jy - 4, jx + 3, jy + 4], fill=LAND, outline=LAND_DK)
-    # UK is a sliver too: fatten its blob the same way so pin 9 (now at
-    # offset 0,0, true London) sits on visible land instead of the
-    # Atlantic west of Britain, where v3's (-7,+9) offset put it.
+    # UK is a sliver too: fatten its blob the same way so pin 13 (now at
+    # offset 0,0, true northern England) sits on visible land, and pin 9
+    # (offset -9,+7, disc SW of London) overlaps the coast instead of
+    # floating in the Atlantic. v5: blob widened 2px west for pin 9.
     ux, uy = px(-0.1, 51.5)
-    d.ellipse([ux - 7, uy - 5, ux + 7, uy + 5], fill=LAND, outline=LAND_DK)
+    d.ellipse([ux - 9, uy - 5, ux + 7, uy + 5], fill=LAND, outline=LAND_DK)
     d.text((mx + 8, my + mh - 14), "ATLANTIC", font=SANS(7), fill=(120, 150, 160))
     d.text((mx + mw - 52, my + mh - 14), "PACIFIC", font=SANS(7),
            fill=(120, 150, 160))
