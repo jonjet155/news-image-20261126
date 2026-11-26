@@ -105,7 +105,7 @@ PANELS = [
 # ALSO ON 14-35: (number, one-line text, source). Kept <= ~72 chars so each
 # fits on ONE line at 9pt in a 342px column.
 ALSO = [
-    (14, "Nor'easter batters US East Coast on Thanksgiving", "AccuWeather"),
+    (14, "Nor'easter disrupts Thanksgiving travel for millions", "AccuWeather"),
     (15, "Thanksgiving proclaimed; targets NYT reporter in posts", "HuffPost"),
     (16, "Anthropic recovers +1.1% after IPO slide", "AP"),
     (17, "Nvidia -3.9% as S&P Global warns on its rating", "AP"),
@@ -264,24 +264,33 @@ def art_mumbai(d, x, y, w, h):
 
 def art_musk(d, x, y, w, h):
     art_bg(d, (x, y, x + w, y + h), (24, 34, 58))
-    for sx, sy in [(20, 14), (70, 30), (130, 12), (200, 26), (260, 12),
-                   (300, 34), (50, 55), (170, 48), (240, 55)]:
+    # stars, all kept inside the art box (v2 had stars below it, invisible,
+    # and past its right edge, onto the next panel)
+    for sx, sy in [(16, 10), (64, 22), (126, 6), (176, 8), (184, 16),
+                   (8, 44), (44, 40), (136, 44), (180, 10)]:
         d.ellipse([x + sx, y + sy, x + sx + 3, y + sy + 3], fill=(252, 248, 236))
-    # rocket
-    rx, ry = x + w // 2 - 12, y + 8
-    d.polygon([(rx + 12, ry), (rx + 24, ry + 22), (rx, ry + 22)], fill=RED)
-    d.rectangle([rx, ry + 22, rx + 24, ry + 62], fill=(252, 248, 236))
-    d.ellipse([rx + 7, ry + 38, rx + 17, ry + 48], fill=TEAL)
-    d.polygon([(rx - 8, ry + 62), (rx, ry + 44), (rx, ry + 62)], fill=RED)
-    d.polygon([(rx + 24, ry + 62), (rx + 32, ry + 62), (rx + 24, ry + 44)],
+    # rocket, compressed to fit h (small panels h=52; v2 flame/fins ran
+    # past the art box and over the kicker + headline). Nose y+2, flame ends y+48.
+    # Shifted +20px right so the flame clears the chip (chip covers x 0..~94,
+    # y 36..52); right coin moved to bottom-right to clear the shifted body.
+    rx, ry = x + w // 2 + 8, y + 2
+    d.polygon([(rx + 12, ry), (rx + 24, ry + 14), (rx, ry + 14)], fill=RED)
+    d.rectangle([rx, ry + 14, rx + 24, ry + 34], fill=(252, 248, 236))
+    d.ellipse([rx + 7, ry + 20, rx + 17, ry + 30], fill=TEAL)
+    d.polygon([(rx - 8, ry + 34), (rx, ry + 24), (rx, ry + 34)], fill=RED)
+    d.polygon([(rx + 24, ry + 34), (rx + 32, ry + 34), (rx + 24, ry + 24)],
               fill=RED)
-    d.polygon([(rx + 6, ry + 62), (rx + 12, ry + 78), (rx + 18, ry + 62)],
+    d.polygon([(rx + 6, ry + 34), (rx + 12, ry + 48), (rx + 18, ry + 34)],
               fill=(255, 200, 60))
-    # two share coins
-    for cx in (x + 34, x + w - 50):
-        d.ellipse([cx, y + h - 34, cx + 26, y + h - 8], fill=MUSTARD,
-                  outline=(26, 26, 26), width=2)
-        d.text((cx + 13, y + h - 21), "$", font=SANS_B(13), fill=INK, anchor="mm")
+    # two share coins, clear of the chip (chip covers y+h-15..y+h+1);
+    # right coin at bottom-right to clear the shifted rocket body.
+    d.ellipse([x + 30, y + h - 44, x + 56, y + h - 18], fill=MUSTARD,
+              outline=(26, 26, 26), width=2)
+    d.text((x + 43, y + h - 31), "$", font=SANS_B(13), fill=INK, anchor="mm")
+    d.ellipse([x + w - 44, y + h - 30, x + w - 18, y + h - 4], fill=MUSTARD,
+              outline=(26, 26, 26), width=2)
+    d.text((x + w - 31, y + h - 17), "$", font=SANS_B(13), fill=INK,
+           anchor="mm")
 
 
 def art_market(d, x, y, w, h):
@@ -331,16 +340,19 @@ def art_gaza(d, x, y, w, h):
 
 def art_tariff(d, x, y, w, h):
     art_bg(d, (x, y, x + w, y + h), (240, 225, 190))
-    # Brazil flag-ish block + China flag-ish block
-    d.rectangle([x + 12, y + 16, x + 92, y + h - 16], fill=(0, 140, 70))
-    d.polygon([(x + 20, y + h // 2), (x + 52, y + 26), (x + 84, y + h // 2),
-               (x + 52, y + h - 26)], fill=(255, 210, 0))
-    d.ellipse([x + 40, y + h // 2 - 12, x + 64, y + h // 2 + 12], fill=NAVY)
-    d.rectangle([x + 108, y + 16, x + 188, y + h - 16], fill=(200, 30, 30))
-    for sx, sy in [(124, 28), (140, 24), (152, 32), (138, 44), (124, 42)]:
+    # Brazil flag-ish block (left) + China flag-ish block (middle), both
+    # narrowed so "%" sits on plain cream at right and reads whole.
+    # v2: "%" was red on the red China block (left half invisible) and the
+    # Brazil "diamond" was degenerate (all 4 vertices on one line).
+    d.rectangle([x + 12, y + 16, x + 80, y + h - 16], fill=(0, 140, 70))
+    d.polygon([(x + 18, y + h // 2), (x + 46, y + 20), (x + 74, y + h // 2),
+               (x + 46, y + h - 20)], fill=(255, 210, 0))
+    d.ellipse([x + 36, y + h // 2 - 10, x + 56, y + h // 2 + 10], fill=NAVY)
+    d.rectangle([x + 88, y + 16, x + 140, y + h - 16], fill=(200, 30, 30))
+    for sx, sy in [(98, 24), (111, 21), (121, 28), (109, 32), (99, 31)]:
         d.ellipse([x + sx - 3, y + sy - 3, x + sx + 3, y + sy + 3],
                   fill=(255, 220, 0))
-    d.text((x + w - 58, y + 12), "%", font=SERIF_B(34), fill=RED)
+    d.text((x + 148, y + 10), "%", font=SERIF_B(30), fill=RED)
 
 
 def art_migration(d, x, y, w, h):
@@ -498,12 +510,12 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
 # pin lon/lat + display offset (px) for declustering; leader line drawn
 # from true point to the pin disc when offset != (0, 0).
 PINS = {1: (-74.0, 40.7, 0, 0), 2: (46.7, 24.7, -3, -6),
-        3: (72.8, 19.1, 3, 0), 4: (-97.7, 30.3, 0, 0),
+        3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
         5: (139.7, 35.7, 0, 0), 6: (30.5, 50.45, 0, 0),
-        7: (34.45, 31.5, 0, 0), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, 3, 0), 10: (56.2, 26.2, 0, -3),
-        11: (6.1, 46.2, 5, 1), 12: (4.35, 50.85, 6, -2),
-        13: (-1.55, 53.8, -3, 3)}
+        7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
+        9: (-0.1, 51.5, -7, 9), 10: (56.2, 26.2, 2, 5),
+        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 1, -11),
+        13: (-1.55, 53.8, -9, -9)}
 
 # ---------------------------------------------------------------- render
 
