@@ -53,8 +53,8 @@ PANELS = [
     dict(n=2, region="Middle East", tag="CONFIRMED", src="SPA",
          art="missile", chip="2 MISSILES DOWN",
          head="Saudi Arabia intercepts 2 Houthi missiles aimed at Riyadh",
-         deck="Air defences also down a drone and a cruise missile; a "
-              "projectile falls on Jazan port, no casualties."),
+         deck="2 ballistic missiles downed; a projectile falls on Jazan "
+              "port, no casualties."),
     dict(n=3, region="Asia-Pacific", tag="CONFIRMED", src="PIB",
          art="mumbai", chip="18 YEARS ON",
          head="India marks 18 years since the 26/11 Mumbai attacks",
@@ -79,7 +79,7 @@ PANELS = [
     dict(n=8, region="Americas", tag="CONFIRMED", src="Al Jazeera",
          art="tariff", chip="TARIFF ROW",
          head="Brazil, China blast US tariffs",
-         deck="Brazil calls the plan 'unacceptable'; China: 'baseless'."),
+         deck="Brazil calls the plan unfair; China: 'baseless'."),
     dict(n=9, region="Europe", tag="CONFIRMED", src="Reuters",
          art="migration", chip="77,000",
          head="UK net migration falls to 77,000",
@@ -96,7 +96,7 @@ PANELS = [
          art="eu", chip="DEADLOCK",
          head="EU budget summit deadlocked",
          deck="'Light-years away' from a deal, Italy's PM says."),
-    dict(n=13, region="Europe", tag="REPORTED", src="Kyiv Post",
+    dict(n=13, region="Europe", tag="REPORTED", src="The Telegraph",
          art="reserves", chip="100,000",
          head="UK contacts 100,000 reservists",
          deck="MoD seeks contacts, jobs, skills; no call-up ordered."),
@@ -113,7 +113,7 @@ ALSO = [
     (19, "India tightens food labels; ends 'double standards'", "Reuters"),
     (20, "India orders tighter checks on bottled water", "Reuters"),
     (21, "Lee Zii Jia, Unnati Hooda reach Syed Modi quarter-finals", "BWF"),
-    (22, "Asia Cup Rising Stars semi: India A v Sri Lanka A", "Indian Express"),
+    (22, "Australia-Fiji alliance in force; Fiji's first ever", "AAP"),
     (23, "Congo Ebola cases pass 12,000; 5,904 dead", "Reuters"),
     (24, "SoftBank +7.3%, Kioxia +12.6% lead Asia AI rebound", "AP"),
     (25, "Hafiz Saeed's son seen with politicians in Pakistan", "News18"),
@@ -328,14 +328,31 @@ def art_kyiv(d, x, y, w, h):
 
 
 def art_gaza(d, x, y, w, h):
-    art_bg(d, (x, y, x + w, y + h), (210, 190, 160))
-    for bx, bw, bh in [(14, 34, 44), (54, 28, 60), (88, 36, 38), (130, 30, 52)]:
-        d.rectangle([x + bx, y + h - bh, x + bx + bw, y + h], fill=(140, 125, 105))
-    # smoke plumes
-    for sx, sy, sr in [(x + 70, y + 22, 14), (x + 96, y + 12, 18),
-                       (x + 130, y + 24, 12)]:
-        d.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill=(120, 110, 100))
-    d.text((x + w - 52, y + h - 34), "8", font=SERIF_B(30), fill=RED_DK)
+    # v4: high contrast — dusk sky, DARK skyline with lit windows, PALE
+    # smoke, casualty count on a cream disc. v3 was grey-on-grey and
+    # unreadable at 300px. Building heights capped so no roof pokes above
+    # the art box (v3 bh=60 overflowed h=52).
+    art_bg(d, (x, y, x + w, y + h), (216, 164, 110))
+    for bx, bw, bh in [(14, 34, 40), (54, 28, 48), (88, 36, 34), (130, 30, 46)]:
+        d.rectangle([x + bx, y + h - bh, x + bx + bw, y + h], fill=(52, 48, 44))
+        for wy in range(y + h - bh + 6, y + h - 6, 12):
+            for wx in range(x + bx + 5, x + bx + bw - 5, 12):
+                d.rectangle([wx, wy, wx + 4, wy + 5], fill=(255, 200, 60))
+    # pale smoke plumes above the skyline: each a cluster of overlapping
+    # ellipses so they read as smoke, not the perfect circles of v4-r1
+    # (which looked like balloons at 300px). No outlines — the pale fill
+    # contrasts against both the dusk sky and the dark buildings.
+    for sx, sy, sr in [(x + 58, y + 24, 9), (x + 72, y + 18, 12),
+                       (x + 84, y + 25, 8), (x + 88, y + 22, 9),
+                       (x + 100, y + 14, 12), (x + 112, y + 22, 9),
+                       (x + 116, y + 26, 7), (x + 126, y + 20, 9),
+                       (x + 136, y + 26, 7)]:
+        d.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill=(240, 234, 222))
+    # casualty count on a cream disc so the red reads at 300px
+    d.ellipse([x + w - 48, y + h - 40, x + w - 12, y + h - 4],
+              fill=(252, 248, 236), outline=(26, 26, 26), width=2)
+    d.text((x + w - 30, y + h - 22), "8", font=SERIF_B(26), fill=RED_DK,
+           anchor="mm")
 
 
 def art_tariff(d, x, y, w, h):
@@ -366,14 +383,20 @@ def art_migration(d, x, y, w, h):
 
 
 def art_hormuz(d, x, y, w, h):
+    # v4: tankers fully INSIDE the art box. v3 put the bridge at y+h-62
+    # (y-10 for h=52) so the tankers were cut off at the panel's top edge.
+    # Water band 12px; hull 14px; bridge 12px — all tops >= y+14.
     art_bg(d, (x, y, x + w, y + h), (150, 190, 210))
-    d.rectangle([x, y + h - 26, x + w, y + h], fill=(40, 110, 150))
-    # two tankers
+    d.rectangle([x, y + h - 12, x + w, y + h], fill=(40, 110, 150))
+    # two tankers: hull + bridge + funnel, all inside the box
     for tx in (x + 16, x + 110):
-        d.rectangle([tx, y + h - 48, tx + 72, y + h - 28], fill=(140, 40, 40))
-        d.rectangle([tx + 10, y + h - 62, tx + 26, y + h - 48], fill=(120, 30, 30))
-    # mines (spiked dots) in open water
-    for mx, my in [(x + 58, y + 14), (x + 168, y + 12), (x + 96, y + 22)]:
+        d.rectangle([tx, y + h - 26, tx + 72, y + h - 12], fill=(140, 40, 40))
+        d.rectangle([tx + 10, y + h - 38, tx + 26, y + h - 26],
+                    fill=(120, 30, 30))
+        d.rectangle([tx + 44, y + h - 34, tx + 52, y + h - 26],
+                    fill=(100, 25, 25))
+    # mines (spiked dots) in open water, clear of both bridges
+    for mx, my in [(x + 58, y + 12), (x + 168, y + 10), (x + 96, y + 16)]:
         d.ellipse([mx - 5, my - 5, mx + 5, my + 5], fill=INK)
         d.line([mx - 9, my, mx + 9, my], fill=INK, width=2)
         d.line([mx, my - 9, mx, my + 9], fill=INK, width=2)
@@ -511,9 +534,9 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
 # from true point to the pin disc when offset != (0, 0).
 PINS = {1: (-74.0, 40.7, 0, 0), 2: (46.7, 24.7, -3, -6),
         3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
-        5: (139.7, 35.7, 0, 0), 6: (30.5, 50.45, 0, 0),
+        5: (139.7, 35.7, -5, 0), 6: (30.5, 50.45, 0, 0),
         7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, -7, 9), 10: (56.2, 26.2, 2, 5),
+        9: (-0.1, 51.5, 0, 0), 10: (56.2, 26.2, 2, 5),
         11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 1, -11),
         13: (-1.55, 53.8, -9, -9)}
 
@@ -583,7 +606,7 @@ def render():
     # ALSO ON regions (parallel list, same order as ALSO)
     also_regions = ["Americas", "Americas", "Americas", "Americas", "Americas",
                     "Asia-Pacific", "Asia-Pacific", "Asia-Pacific",
-                    "Asia-Pacific", "Africa", "Asia-Pacific",
+                    "Oceania", "Africa", "Asia-Pacific",
                     "Asia-Pacific", "Global", "Global", "Middle East",
                     "Middle East", "Middle East", "Europe", "Europe",
                     "Europe", "Europe", "Europe"]
@@ -675,8 +698,15 @@ def render():
                   outline=LAND_DK)
     # Japan is a thin sliver at this scale: fatten its blob slightly so the
     # green island visibly protrudes beyond pin 5 (B14 small-island rule).
+    # v4: blob AND pin both shifted 5px west — v3 pin sat on the island's
+    # eastern edge, disc mostly over the Pacific.
     jx, jy = px(139.7, 35.7)
-    d.ellipse([jx - 8, jy - 4, jx + 8, jy + 4], fill=LAND, outline=LAND_DK)
+    d.ellipse([jx - 13, jy - 4, jx + 3, jy + 4], fill=LAND, outline=LAND_DK)
+    # UK is a sliver too: fatten its blob the same way so pin 9 (now at
+    # offset 0,0, true London) sits on visible land instead of the
+    # Atlantic west of Britain, where v3's (-7,+9) offset put it.
+    ux, uy = px(-0.1, 51.5)
+    d.ellipse([ux - 7, uy - 5, ux + 7, uy + 5], fill=LAND, outline=LAND_DK)
     d.text((mx + 8, my + mh - 14), "ATLANTIC", font=SANS(7), fill=(120, 150, 160))
     d.text((mx + mw - 52, my + mh - 14), "PACIFIC", font=SANS(7),
            fill=(120, 150, 160))
