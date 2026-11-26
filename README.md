@@ -1,6 +1,6 @@
 [![make.fun](https://make.fun/badge/news-image-20261126.svg)](https://make.fun/c/news-image-20261126)
-[![make.fun rank](https://make.fun/badge/news-image-20261126/rank.svg)](https://make.fun/c/news-image-20261126)
-[![make.fun reward](https://make.fun/badge/news-image-20261126/reward.svg)](https://make.fun/c/news-image-20261126)
+[![make.fun rank](https://make.fun/badge/news-image-20261126/jonjet155/news-image-20261126/rank.svg)](https://make.fun/c/news-image-20261126)
+[![make.fun reward](https://make.fun/badge/news-image-20261126/jonjet155/news-image-20261126/reward.svg)](https://make.fun/c/news-image-20261126)
 
 # The World in One Day — Thursday 26 November 2026
 
