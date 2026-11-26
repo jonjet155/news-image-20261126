@@ -63,7 +63,7 @@ PANELS = [
     dict(n=4, region="Americas", tag="CONFIRMED", src="Reuters",
          art="musk", chip="2 SHARES EACH",
          head="Musk pledges 2 SpaceX shares per US child",
-         deck="First transfers start next month; SpaceX unlisted."),
+         deck="First transfers start in December; SpaceX unlisted."),
     dict(n=5, region="Global", tag="CONFIRMED", src="AP",
          art="market", chip="REBOUND",
          head="Asia, Europe rebound after tariff rout",
@@ -71,7 +71,7 @@ PANELS = [
     dict(n=6, region="Europe", tag="CONFIRMED", src="NY Post",
          art="kyiv", chip="KYIV HIT",
          head="Russian missile hits Kyiv mall; 7 hurt",
-         deck="Four killed in Kharkiv, two in Sloviansk; 87 drones down."),
+         deck="7 hurt in Kyiv; 4 killed in Kharkiv, 2 in Sloviansk; 87 drones down."),
     dict(n=7, region="Middle East", tag="CONFIRMED", src="AP",
          art="gaza", chip="8 KILLED",
          head="Israeli strikes kill 8 in Gaza",
@@ -84,7 +84,7 @@ PANELS = [
          art="migration", chip="77,000",
          head="UK net migration falls to 77,000",
          deck="Lowest in nearly three decades outside the pandemic."),
-    dict(n=10, region="Middle East", tag="REPORTED", src="US News",
+    dict(n=10, region="Middle East", tag="CLAIM", src="Tasnim",
          art="hormuz", chip="CLAIM",
          head="Iran claims 2 tankers mined near Hormuz",
          deck="IRGC says the tankers were mined off Khasab, Oman."),
@@ -96,7 +96,7 @@ PANELS = [
          art="eu", chip="DEADLOCK",
          head="EU budget summit deadlocked",
          deck="'Light-years away' from a deal, Italy's PM says."),
-    dict(n=13, region="Europe", tag="REPORTED", src="Jerusalem Post",
+    dict(n=13, region="Europe", tag="REPORTED", src="Kyiv Post",
          art="reserves", chip="100,000",
          head="UK contacts 100,000 reservists",
          deck="MoD seeks contacts, jobs, skills; no call-up ordered."),
@@ -106,22 +106,22 @@ PANELS = [
 # fits on ONE line at 9pt in a 342px column.
 ALSO = [
     (14, "Nor'easter batters US East Coast on Thanksgiving", "AccuWeather"),
-    (15, "Trump proclaims Thanksgiving; rants at NYT reporter", "HuffPost"),
-    (16, "Wall St mixed Wed: S&P -0.3%, Nasdaq -0.6%, Dow +0.3%", "AP"),
+    (15, "Thanksgiving proclaimed; targets NYT reporter in posts", "HuffPost"),
+    (16, "Anthropic recovers +1.1% after IPO slide", "AP"),
     (17, "Nvidia -3.9% as S&P Global warns on its rating", "AP"),
     (18, "Venezuela continues US-backed talks", "Caribbean News Global"),
     (19, "India tightens food labels; ends 'double standards'", "Reuters"),
     (20, "India orders tighter checks on bottled water", "Reuters"),
-    (21, "Lee Zii Jia, Unnati Hooda reach Syed Modi QFs", "BWF"),
+    (21, "Lee Zii Jia, Unnati Hooda reach Syed Modi quarter-finals", "BWF"),
     (22, "Asia Cup Rising Stars semi: India A v Sri Lanka A", "Indian Express"),
-    (23, "Mumbai beat Uttarakhand by 86 runs in Mushtaq Ali", "Times of India"),
+    (23, "Congo Ebola cases pass 12,000; 5,904 dead", "Reuters"),
     (24, "SoftBank +7.3%, Kioxia +12.6% lead Asia AI rebound", "AP"),
     (25, "Hafiz Saeed's son seen with politicians in Pakistan", "News18"),
-    (26, "Australia's Labor under fire after inflation shock", "SBS"),
+    (26, "Dollar rises to 159.30 yen; euro $1.0968", "AP"),
     (27, "Oil up: Brent $91.09, WTI $84.51 on Mideast tension", "AP"),
     (28, "Syria seizes IRGC arms bound for Lebanon", "Iran International"),
     (29, "ISIS suicide attack kills 2 Syrian security staff", "Al Jazeera"),
-    (30, "Syria seizes 783,000 Captagon pills from Lebanon", "L'Orient Today"),
+    (30, "783,000 Captagon pills seized on Lebanon border", "L'Orient Today"),
     (31, "Ukraine drone kills 5 in occupied Zaporizhzhia", "Al Jazeera"),
     (32, "Zelenskyy: Russia readying new energy strike", "Ukrainska Pravda"),
     (33, "Kremlin: Ukraine seeks to widen war to Med, Baltics", "Reuters"),
@@ -131,7 +131,7 @@ ALSO = [
 
 TIMELINE = [
     ("04:30 UTC", "Musk pledges 2 SpaceX shares for every US child"),
-    ("05:21 UTC", "Asia stocks rebound; Nikkei closes +0.9%"),
+    ("06:21 UTC", "Asia stocks rebound; Nikkei closes +0.9%"),
     ("07:03 UTC", "Saudi intercepts 2 missiles aimed at Riyadh"),
     ("07:30 UTC", "Israeli strikes kill 8 in Gaza"),
     ("10:30 UTC", "Russian missile hits Kyiv mall; 7 hurt"),
@@ -296,7 +296,8 @@ def art_market(d, x, y, w, h):
     d.line(pts, fill=(30, 130, 70), width=3, joint="curve")
     d.polygon([(pts[-1][0] - 10, pts[-1][1] + 2), (pts[-1][0] + 2, pts[-1][1] + 2),
                (pts[-1][0] - 4, pts[-1][1] + 12)], fill=(30, 130, 70))
-    d.text((x + 10, y + 4), "+0.9%", font=SANS_B(13), fill=(30, 130, 70))
+    d.text((x + w - 10, y + 4), "+0.9%", font=SANS_B(13), fill=(30, 130, 70),
+           anchor="ra")
 
 
 def art_kyiv(d, x, y, w, h):
@@ -570,8 +571,8 @@ def render():
     # ALSO ON regions (parallel list, same order as ALSO)
     also_regions = ["Americas", "Americas", "Americas", "Americas", "Americas",
                     "Asia-Pacific", "Asia-Pacific", "Asia-Pacific",
-                    "Asia-Pacific", "Asia-Pacific", "Asia-Pacific",
-                    "Asia-Pacific", "Oceania", "Global", "Middle East",
+                    "Asia-Pacific", "Africa", "Asia-Pacific",
+                    "Asia-Pacific", "Global", "Global", "Middle East",
                     "Middle East", "Middle East", "Europe", "Europe",
                     "Europe", "Europe", "Europe"]
     assert len(also_regions) == len(ALSO)
@@ -703,7 +704,7 @@ def render():
            font=SANS_B(10), fill=RED)
     d.text((24, dy + 20), DATECHECK_LEFT[0], font=SANS(8), fill=INK)
     d.text((24, dy + 32), DATECHECK_LEFT[1], font=SANS(8), fill=INK)
-    d.text((24, dy + 44), DATECHECK_NOTYET, font=SANS(8), fill=INK)
+    d.text((24, dy + 42), DATECHECK_NOTYET, font=SANS(8), fill=INK)
     # ---- footer ----
     fy = 982
     d.text((W // 2, fy), "Every story here was reported on Thursday 26 November 2026 "
