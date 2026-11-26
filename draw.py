@@ -134,7 +134,7 @@ TIMELINE = [
     ("06:21 UTC", "Asia stocks rebound; Nikkei closes +0.9%"),
     ("07:03 UTC", "Saudi intercepts 2 missiles aimed at Riyadh"),
     ("07:30 UTC", "Israeli strikes kill 8 in Gaza"),
-    ("10:30 UTC", "Russian missile hits Kyiv mall; 7 hurt, 6 killed"),
+    ("10:30 UTC", "Kyiv mall hit — 7 hurt; 6 more killed in east"),
     ("14:00 UTC", "Gukesh Game 3 begins; Mumbai 26/11 memorial"),
 ]
 
@@ -530,29 +530,30 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
               AUSTRALIA, NZ, MADAGASCAR, INDONESIA, PHILIPPINES, SRILANKA,
               TAIWAN, ICELAND, CUBA, IRELAND]
 
-# v7 offsets: 1 (-3,-2) NW onto NJ land + 9 (-4,+11) to Spain land +
-# 10 (+5,-4) NE onto Iran's south coast + 11 (0,-1) back to true Geneva
-# + 12 (+11,-2) east to Poland/Germany land + 13 (-2,0) west 2px off 11.
-# Joint search over land>=85% candidates caps the cluster min-distance
-# at ~10.5px (v6: 10.3) — 4 true points in a 6x7px box cannot clear r=8
-# discs; leaders go UNDER all discs now (two-pass draw) so no leader
-# crosses a disc, and two-digit numbers render at 7pt (11.1px "11" glyph
-# overflowed the 12px red disc at 8pt, which is why 11 read partly obscured).
-# v7 VERIFIED (render + land-check programatik, disc r<=5, render tanpa pin):
-# 1: 60%->94% | 9: 72%->90% | 10: 43%->100% | 11: 49%->88% |
-# 12: 100% | 13: 88%->~85% (trade 3% untuk +1.5px jarak dari 11).
-# Semua pin >=85% land. Jarak minimum klaster 10.5px (11-13).
-# Catatan sampling: land% pin 13 goyah 81-88% antar grid sub-piksel
-# (garis pantai tepat di tepi cakram) — angka ~85% jujurnya.
-# pin lon/lat + display offset (px) for declustering; leader line drawn
-# from true point to the pin disc when offset != (0, 0).
+# v8 offsets (from v7): 6 (0,0)->(2,0) east 2px off 12 + 9 (-4,+11)->(-4,+14)
+# south 3px, same land, +2px clear of 11 + 12 (11,-2)->(11,-4) north 2px,
+# still 100% land, +1.2px clear of 11 + 13 (-2,0)->(-2,+1) south 1px.
+# 9's grid search caps at ~91% for any offset keeping >=11px from the
+# cluster (deeper south = Morocco, location-wrong, rejected); 13's 100%
+# spots sit <=8.5px from 11 (discs merge), rejected. Cluster min-distance
+# v8: 9.9px (11-13, structural floor) vs 10.5px v7; all other pairs >=12px.
+# v8 VERIFIED (render + land-check programatik, disc r<=5, render tanpa pin):
+# 1: 93.8% | 2: 100% | 3: 95.1% | 4: 100% | 5: 93.8% | 6: 100% |
+# 7: 100% | 8: 100% | 9: 90.1% (tetap — grid search mentok ~91% untuk
+# offset yang menjaga jarak klaster; selatan lebih jauh = Maroko,
+# lokasi salah, ditolak) | 10: 100% | 11: 87.7% | 12: 100% |
+# 13: 85.2%->95.1%. Semua pin >=87.7% land. Jarak minimum klaster 9.9px
+# (11-13, residu struktural — titik benar London/Inggris utara/Jenewa
+# berjarak 2.5-8px di peta ini); pasangan lain >=12.2px. Crop 3x/4x:
+# angka 11 dan 13 sama-sama terbaca penuh (angka digambar terakhir),
+# pin 9 jelas di daratan Spanyol, 12-6 kini ada celah.
 PINS = {1: (-74.0, 40.7, -3, -2), 2: (46.7, 24.7, -3, -6),
         3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
-        5: (139.7, 35.7, -8, 0), 6: (30.5, 50.45, 0, 0),
+        5: (139.7, 35.7, -8, 0), 6: (30.5, 50.45, 2, 0),
         7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, -4, 11), 10: (56.2, 26.2, 5, -4),
-        11: (6.1, 46.2, 0, -1), 12: (4.35, 50.85, 11, -2),
-        13: (-1.55, 53.8, -2, 0)}
+        9: (-0.1, 51.5, -4, 14), 10: (56.2, 26.2, 5, -4),
+        11: (6.1, 46.2, 0, -1), 12: (4.35, 50.85, 11, -4),
+        13: (-1.55, 53.8, -2, 1)}
 
 # ---------------------------------------------------------------- render
 
