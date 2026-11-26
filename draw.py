@@ -134,7 +134,7 @@ TIMELINE = [
     ("06:21 UTC", "Asia stocks rebound; Nikkei closes +0.9%"),
     ("07:03 UTC", "Saudi intercepts 2 missiles aimed at Riyadh"),
     ("07:30 UTC", "Israeli strikes kill 8 in Gaza"),
-    ("10:30 UTC", "Russian missile hits Kyiv mall; 7 hurt"),
+    ("10:30 UTC", "Russian missile hits Kyiv mall; 7 hurt, 6 killed"),
     ("14:00 UTC", "Gukesh Game 3 begins; Mumbai 26/11 memorial"),
 ]
 
@@ -530,20 +530,29 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
               AUSTRALIA, NZ, MADAGASCAR, INDONESIA, PHILIPPINES, SRILANKA,
               TAIWAN, ICELAND, CUBA, IRELAND]
 
-# v6: 9 (0,+8) south to Spain land + 12 (9,0) east to Poland land, both with
-# leader lines to their true points. First pass tried 9/12/13 all at (0,0):
-# pixels proved the discs overlap (London-Brussels-N.England true points are
-# 2.5-4px apart at this scale; "13"/"9" glyphs mushed) — so 9 and 12 are
-# declustered onto nearby LAND instead of sea (v4/v5 sea discs rejected).
+# v7 offsets: 1 (-3,-2) NW onto NJ land + 9 (-4,+11) to Spain land +
+# 10 (+5,-4) NE onto Iran's south coast + 11 (0,-1) back to true Geneva
+# + 12 (+11,-2) east to Poland/Germany land + 13 (-2,0) west 2px off 11.
+# Joint search over land>=85% candidates caps the cluster min-distance
+# at ~10.5px (v6: 10.3) — 4 true points in a 6x7px box cannot clear r=8
+# discs; leaders go UNDER all discs now (two-pass draw) so no leader
+# crosses a disc, and two-digit numbers render at 7pt (11.1px "11" glyph
+# overflowed the 12px red disc at 8pt, which is why 11 read partly obscured).
+# v7 VERIFIED (render + land-check programatik, disc r<=5, render tanpa pin):
+# 1: 60%->94% | 9: 72%->90% | 10: 43%->100% | 11: 49%->88% |
+# 12: 100% | 13: 88%->~85% (trade 3% untuk +1.5px jarak dari 11).
+# Semua pin >=85% land. Jarak minimum klaster 10.5px (11-13).
+# Catatan sampling: land% pin 13 goyah 81-88% antar grid sub-piksel
+# (garis pantai tepat di tepi cakram) — angka ~85% jujurnya.
 # pin lon/lat + display offset (px) for declustering; leader line drawn
 # from true point to the pin disc when offset != (0, 0).
-PINS = {1: (-74.0, 40.7, 0, 0), 2: (46.7, 24.7, -3, -6),
+PINS = {1: (-74.0, 40.7, -3, -2), 2: (46.7, 24.7, -3, -6),
         3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
         5: (139.7, 35.7, -8, 0), 6: (30.5, 50.45, 0, 0),
         7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, 0, 8), 10: (56.2, 26.2, 2, 5),
-        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 9, 0),
-        13: (-1.55, 53.8, 0, 0)}
+        9: (-0.1, 51.5, -4, 11), 10: (56.2, 26.2, 5, -4),
+        11: (6.1, 46.2, 0, -1), 12: (4.35, 50.85, 11, -2),
+        13: (-1.55, 53.8, -2, 0)}
 
 # ---------------------------------------------------------------- render
 
@@ -715,9 +724,11 @@ def render():
     d.text((mx + 8, my + mh - 14), "ATLANTIC", font=SANS(7), fill=(120, 150, 160))
     d.text((mx + mw - 52, my + mh - 14), "PACIFIC", font=SANS(7),
            fill=(120, 150, 160))
-    # pins: thin halo style (disc r=6 + white outline 2px), leader lines.
-    # Discs first, numbers second, so overlapping cluster discs (Europe,
-    # Middle East) keep every number legible — white on red either way.
+    # pins: thin halo style (disc r=6 + white outline 2px). Two passes:
+    # ALL leader lines + true-point dots first, then ALL discs — so no
+    # leader ever crosses another pin's disc (v7: 12's eastward leader
+    # used to cut across 11's disc). Numbers last, so overlapping
+    # cluster discs (Europe, Middle East) keep every number legible.
     pin_xy = {}
     for n, (lon, lat, dx, dy) in PINS.items():
         tx_, ty_ = px(lon, lat)
@@ -726,10 +737,15 @@ def render():
         if (dx, dy) != (0, 0):
             d.line([tx_, ty_, cx, cy], fill=INK, width=1)
             d.ellipse([tx_ - 1, ty_ - 1, tx_ + 1, ty_ + 1], fill=INK)
+    for n, (cx, cy) in pin_xy.items():
         d.ellipse([cx - 6, cy - 6, cx + 6, cy + 6], fill=RED,
                   outline=(255, 255, 255), width=2)
     for n, (cx, cy) in pin_xy.items():
-        d.text((cx, cy), str(n), font=SANS_B(8), fill=(255, 255, 255),
+        # two-digit numbers at 7pt: "11" is 11.1px wide at 8pt but the red
+        # disc is only 12px across, so the outer strokes sat on the white
+        # outline and read partly obscured (v6 pin 11). 7pt = ~9.7px.
+        nf = SANS_B(7 if n >= 10 else 8)
+        d.text((cx, cy), str(n), font=nf, fill=(255, 255, 255),
                anchor="mm")
     # ALSO ON: two columns, one line each
     af = SANS(9)
