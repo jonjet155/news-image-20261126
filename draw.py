@@ -70,7 +70,7 @@ PANELS = [
          deck="Nikkei +0.9% to 57,499; Kospi +0.3% after -6.2% fall."),
     dict(n=6, region="Europe", tag="CONFIRMED", src="NY Post",
          art="kyiv", chip="KYIV HIT",
-         head="Russian missile hits Kyiv mall; 7 hurt",
+         head="Russia hits Kyiv mall; 7 hurt, 6 killed in east",
          deck="7 hurt in Kyiv; 4 killed in Kharkiv, 2 in Sloviansk; 87 drones down."),
     dict(n=7, region="Middle East", tag="CONFIRMED", src="AP",
          art="gaza", chip="8 KILLED",
@@ -107,7 +107,7 @@ PANELS = [
 ALSO = [
     (14, "Nor'easter disrupts Thanksgiving travel for millions", "AccuWeather"),
     (15, "Thanksgiving proclaimed; targets NYT reporter in posts", "HuffPost"),
-    (16, "Anthropic recovers +1.1% after IPO slide", "AP"),
+    (16, "Europe stocks rally: DAX +1.9%, CAC +1.8%, FTSE +1.6%", "AP"),
     (17, "Nvidia -3.9% as S&P Global warns on its rating", "AP"),
     (18, "Venezuela continues US-backed talks", "Caribbean News Global"),
     (19, "India tightens food labels; ends 'double standards'", "Reuters"),
@@ -530,15 +530,20 @@ CONTINENTS = [N_AMERICA, GREENLAND, S_AMERICA, AFRICA, EURASIA, UK, JAPAN,
               AUSTRALIA, NZ, MADAGASCAR, INDONESIA, PHILIPPINES, SRILANKA,
               TAIWAN, ICELAND, CUBA, IRELAND]
 
+# v6: 9 (0,+8) south to Spain land + 12 (9,0) east to Poland land, both with
+# leader lines to their true points. First pass tried 9/12/13 all at (0,0):
+# pixels proved the discs overlap (London-Brussels-N.England true points are
+# 2.5-4px apart at this scale; "13"/"9" glyphs mushed) — so 9 and 12 are
+# declustered onto nearby LAND instead of sea (v4/v5 sea discs rejected).
 # pin lon/lat + display offset (px) for declustering; leader line drawn
 # from true point to the pin disc when offset != (0, 0).
 PINS = {1: (-74.0, 40.7, 0, 0), 2: (46.7, 24.7, -3, -6),
         3: (72.8, 19.1, 3, 0), 4: (-99.0, 38.5, 0, 0),
-        5: (139.7, 35.7, -5, 0), 6: (30.5, 50.45, 0, 0),
+        5: (139.7, 35.7, -8, 0), 6: (30.5, 50.45, 0, 0),
         7: (34.45, 31.5, -8, 5), 8: (-47.9, -15.8, 0, 0),
-        9: (-0.1, 51.5, 0, 0), 10: (56.2, 26.2, 2, 5),
-        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 1, -11),
-        13: (-1.55, 53.8, -9, -9)}
+        9: (-0.1, 51.5, 0, 8), 10: (56.2, 26.2, 2, 5),
+        11: (6.1, 46.2, 10, 6), 12: (4.35, 50.85, 9, 0),
+        13: (-1.55, 53.8, 0, 0)}
 
 # ---------------------------------------------------------------- render
 
@@ -604,7 +609,7 @@ def render():
     for p in PANELS:
         counts[p["region"]] += 1
     # ALSO ON regions (parallel list, same order as ALSO)
-    also_regions = ["Americas", "Americas", "Americas", "Americas", "Americas",
+    also_regions = ["Americas", "Americas", "Europe", "Americas", "Americas",
                     "Asia-Pacific", "Asia-Pacific", "Asia-Pacific",
                     "Oceania", "Africa", "Asia-Pacific",
                     "Asia-Pacific", "Global", "Global", "Middle East",
